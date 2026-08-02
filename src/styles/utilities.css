@@ -1,0 +1,36 @@
+/**
+ * Custom utilities. `@utility` rather than a plain class so these compose with
+ * variants — `md:scrollbar-none`, `dark:shimmer` — and get sorted correctly by
+ * `prettier-plugin-tailwindcss`.
+ */
+
+/* The focus treatment shared by every interactive component. Centralised so a
+   single edit re-tunes focus visibility across the app. */
+@utility focus-ring {
+    @apply focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px];
+}
+
+/* Visually hidden until focused — the standard skip-link treatment. */
+@utility sr-only-focusable {
+    @apply sr-only focus:not-sr-only focus:absolute focus:z-50;
+}
+
+@utility scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Skeleton sweep. Pair with `animate-shimmer`. */
+@utility shimmer {
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        --alpha(var(--color-foreground) / 6%) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+}

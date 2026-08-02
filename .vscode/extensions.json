@@ -4,7 +4,7 @@
         "dbaeumer.vscode-eslint",
         "bradlc.vscode-tailwindcss",
         "eamodio.gitlens",
-        "usernamehw.errorlens",
-        "christian-kohler.path-intellisense"
+        "PKief.material-icon-theme",
+        "EditorConfig.EditorConfig"
     ]
 }

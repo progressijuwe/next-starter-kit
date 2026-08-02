@@ -1,0 +1,64 @@
+/**
+ * Element-level defaults. Everything here applies app-wide without a class, so
+ * keep it small — prefer a component or a utility over adding to this file.
+ */
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    html {
+        @apply font-sans antialiased;
+        scroll-behavior: smooth;
+        /* Stop layout shifting sideways when a scrollbar appears or disappears. */
+        scrollbar-gutter: stable;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-background text-foreground text-body;
+        text-rendering: optimizeLegibility;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-heading text-balance;
+    }
+
+    /* Visible focus for keyboard users. Never drop this outline without
+       providing an equally visible replacement. */
+    :focus-visible {
+        @apply outline-ring outline-2 outline-offset-2;
+    }
+
+    /* Skip-link targets and other programmatic focus shouldn't draw a ring. */
+    [tabindex='-1']:focus {
+        @apply outline-none;
+    }
+
+    ::selection {
+        @apply bg-primary/20;
+    }
+
+    /* Honour the OS motion preference. Anything animated degrades to an
+       instant state change rather than breaking. */
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
