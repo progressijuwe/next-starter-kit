@@ -69,6 +69,55 @@ npm run build
 
 `main` should never receive a direct commit.
 
+## The lockfile is cross-platform
+
+Development happens on Windows; CI runs on Linux. `npm install` resolves the
+dependency tree for **the machine it runs on**, and several build tools ship a
+different binary per platform (`@tailwindcss/oxide-*`, `@next/swc-*`,
+`lightningcss-*`, `@img/sharp-*`) plus a WebAssembly fallback. A lockfile
+generated on Windows can therefore be missing edges that Linux needs, and
+`npm ci` refuses to install:
+
+```
+npm error Missing: @emnapi/runtime@1.11.3 from lock file
+```
+
+It never reproduces locally, because locally you are the platform the lockfile
+was built for.
+
+So after **any** dependency change, regenerate the lockfile with Linux
+resolution before committing:
+
+```bash
+npm_config_os=linux npm_config_cpu=x64 npm install --package-lock-only
+```
+
+In PowerShell:
+
+```powershell
+$env:npm_config_os='linux'; $env:npm_config_cpu='x64'
+npm install --package-lock-only
+Remove-Item Env:npm_config_os, Env:npm_config_cpu
+```
+
+Then verify it resolves everywhere. Each of these must exit 0 — the last one is
+what CI actually runs:
+
+```bash
+npm ci --dry-run                                            # your machine
+npm_config_os=linux npm_config_cpu=x64 npm ci --dry-run     # CI
+```
+
+`--dry-run` validates the lockfile against `package.json` without touching
+`node_modules`, which makes it a fast pre-push check.
+
+Two related traps:
+
+- **Editing `package.json` by hand** without re-running an install desynchronises
+  the lockfile the same way. `npm ci` compares the two and fails on any drift.
+- **Don't "fix" this by switching CI to `npm install`.** That hides the drift and
+  gives up the reproducible install that `npm ci` exists to provide.
+
 ## CI
 
 `.github/workflows/ci.yml` runs on every pull request and on pushes to `main`
