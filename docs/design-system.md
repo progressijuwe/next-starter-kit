@@ -79,6 +79,12 @@ The scale is semantic, not measurement-based. `text-h2` states intent;
 Each carries its own line-height, letter-spacing and weight, so `text-h2` alone
 is the whole treatment.
 
+> **Adding a `--text-*` token takes two edits.** Register it in `tokens.css`
+> _and_ in the `font-size` class group in `lib/utils.ts`. `tailwind-merge` only
+> knows Tailwind's built-in scales; an unregistered `text-foo` looks like a
+> colour to it, so it will treat `text-foo text-muted-foreground` as a conflict
+> and silently drop the size.
+
 Reach for `Heading` and `Text` rather than the raw utilities — they keep the
 semantic element separate from the visual size:
 

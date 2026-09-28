@@ -39,7 +39,11 @@ export function Spinner({ className, size, label = 'Loading', ...props }: Spinne
     return (
         <span
             data-slot="spinner"
-            role="status"
+            /* Only a live region when it has something to announce. With
+               `label={null}` this is decorative, and an empty `role="status"`
+               is a landmark screen readers report with no content. */
+            role={label ? 'status' : undefined}
+            aria-hidden={label ? undefined : true}
             className={cn('inline-flex items-center justify-center', className)}
             {...props}
         >

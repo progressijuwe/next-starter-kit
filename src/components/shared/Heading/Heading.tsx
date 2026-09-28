@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 
+import type { ElementType } from 'react';
+
 import { headingVariants } from './headingVariants';
 import type { HeadingElement, HeadingProps } from './Heading.types';
 
@@ -24,7 +26,11 @@ export function Heading<T extends HeadingElement = 'h2'>({
     children,
     ...props
 }: HeadingProps<T>) {
-    const Component = (as ?? 'h2') as HeadingElement;
+    /* Widened to ElementType for the render call only. `HeadingElement`
+       still constrains the public API via HeadingProps — but a union of
+       elements has no single ref type, so TS can't match the spread props to
+       any one of them without this. */
+    const Component = (as ?? 'h2') as ElementType;
 
     return (
         <Component className={cn(headingVariants({ size, align, muted }), className)} {...props}>

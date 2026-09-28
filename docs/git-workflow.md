@@ -69,9 +69,11 @@ npm run build
 
 `main` should never receive a direct commit.
 
-## Suggested CI
+## CI
 
-Nothing is wired up yet. A minimal pipeline on pull requests:
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`
+and `develop`. It reads `.nvmrc`, so CI and local Node versions can't drift, and
+runs the checks cheapest-first:
 
 ```yaml
 - npm ci

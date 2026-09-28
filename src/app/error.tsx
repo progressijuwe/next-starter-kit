@@ -15,10 +15,15 @@ import { isDevelopment } from '@/config/env';
  */
 export default function Error({
     error,
-    reset,
+    unstable_retry,
 }: {
     error: Error & { digest?: string };
-    reset: () => void;
+    /**
+     * Next.js also passes a `reset`, which only clears the boundary's error
+     * state — the failed render usually just fails again. `unstable_retry`
+     * refreshes the router first, so a transient failure can actually recover.
+     */
+    unstable_retry: () => void;
 }) {
     useEffect(() => {
         /* Replace with your error reporter (Sentry, etc.). `digest` is the
@@ -49,7 +54,7 @@ export default function Error({
                     </Text>
                 ) : null}
 
-                <Button onClick={reset} size="lg" className="mt-2">
+                <Button onClick={() => unstable_retry()} size="lg" className="mt-2">
                     Try again
                 </Button>
             </Container>

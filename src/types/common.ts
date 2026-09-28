@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react';
+import type { ComponentProps, ElementType, ReactNode } from 'react';
 
 /** Props every styleable component accepts. */
 export interface BaseProps {
@@ -14,7 +14,7 @@ export interface BaseProps {
  * `Omit` prevents the caller's own props from colliding with the element's.
  */
 export type PolymorphicProps<T extends ElementType, Own = object> = Own &
-    Omit<ComponentPropsWithoutRef<T>, keyof Own | 'as'> & {
+    Omit<ComponentProps<T>, keyof Own | 'as'> & {
         as?: T;
     };
 

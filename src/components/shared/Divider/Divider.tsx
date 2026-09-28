@@ -28,19 +28,22 @@ export function Divider({
 }: DividerProps) {
     if (label && orientation === 'horizontal') {
         return (
-            <div className="flex w-full items-center gap-3" role="presentation">
+            /* `className` styles the composite, not each half. Applying it to
+               both rules meant a width or colour override was rendered twice —
+               `className="w-32"` produced two 32-unit rules, not one. */
+            <div className={cn('flex w-full items-center gap-3', className)} role="presentation">
                 <SeparatorPrimitive.Root
                     data-slot="divider"
                     orientation="horizontal"
                     decorative={decorative}
-                    className={cn('bg-border h-px flex-1', className)}
+                    className="bg-border h-px flex-1"
                     {...props}
                 />
                 <span className="text-caption text-muted-foreground shrink-0">{label}</span>
                 <SeparatorPrimitive.Root
                     orientation="horizontal"
                     decorative
-                    className={cn('bg-border h-px flex-1', className)}
+                    className="bg-border h-px flex-1"
                 />
             </div>
         );

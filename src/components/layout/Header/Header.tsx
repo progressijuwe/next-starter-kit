@@ -8,11 +8,15 @@ import { Logo } from '@/components/shared/Logo';
 import { Button } from '@/components/ui/Button';
 import { mainNav, siteConfig } from '@/config/site';
 
+import { MobileNav } from '../MobileNav';
 import { ThemeToggle } from '../ThemeToggle';
 
+const navLinkClasses =
+    'text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring rounded-md px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-[3px]';
+
 /**
- * Site header. A Server Component — only ThemeToggle crosses into the client,
- * so the nav markup ships as HTML with no JavaScript cost.
+ * Site header. A Server Component — only ThemeToggle and MobileNav cross into
+ * the client, so the nav markup ships as HTML.
  */
 export function Header() {
     return (
@@ -25,12 +29,21 @@ export function Header() {
                         <ul className="flex items-center gap-1">
                             {mainNav.map((item) => (
                                 <li key={item.href}>
-                                    <Link
-                                        href={item.href}
-                                        className="text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring rounded-md px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-[3px]"
-                                    >
-                                        {item.title}
-                                    </Link>
+                                    {item.external ? (
+                                        <a
+                                            href={item.href}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                            className={navLinkClasses}
+                                        >
+                                            {item.title}
+                                            <span className="sr-only"> (opens in a new tab)</span>
+                                        </a>
+                                    ) : (
+                                        <Link href={item.href} className={navLinkClasses}>
+                                            {item.title}
+                                        </Link>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -42,12 +55,17 @@ export function Header() {
                                 href={siteConfig.links.github}
                                 target="_blank"
                                 rel="noreferrer noopener"
-                                aria-label="GitHub repository (opens in a new tab)"
+                                aria-label="Source code on GitHub (opens in a new tab)"
                             >
                                 <CodeXmlIcon />
                             </a>
                         </Button>
                         <ThemeToggle />
+                        {/* Below `md` the nav above is hidden, so this is the
+                            only route to it. */}
+                        <div className="md:hidden">
+                            <MobileNav />
+                        </div>
                     </div>
                 </div>
             </Container>

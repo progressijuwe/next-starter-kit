@@ -264,10 +264,7 @@ export function Showcase() {
                             </CardHeader>
                             <CardContent className="flex items-center gap-3">
                                 <Avatar>
-                                    <AvatarImage
-                                        src="https://i.pravatar.cc/96?img=5"
-                                        alt="Ada Lovelace"
-                                    />
+                                    <AvatarImage src="/avatar-demo.svg" alt="Ada Lovelace" />
                                     <AvatarFallback>{getInitials('Ada Lovelace')}</AvatarFallback>
                                 </Avatar>
                                 <Avatar size="lg">

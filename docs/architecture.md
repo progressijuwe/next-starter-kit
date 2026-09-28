@@ -51,6 +51,10 @@ envelope is stripped in `api.ts`, so `api.get<User>()` resolves to a `User`.
 Endpoints that need the envelope (paginated lists need `meta`) use `apiClient`
 directly — see `usersService.list`.
 
+Requests made on the **server** are unauthenticated: `token-store` reads browser
+storage, so it returns `null` during SSR. Pass the credential per call when you
+need it there — `services/api.ts` documents the pattern.
+
 Auth tokens are read through `lib/token-store.ts`. It uses `localStorage`, which
 is XSS-exposed; the module is deliberately three functions wide so it can be
 replaced with httpOnly cookies without touching anything else. See the note in
@@ -78,8 +82,14 @@ for mutations, which are rarely idempotent.
 
 ## Environment
 
-`config/env.ts` validates `process.env` with Zod at import time, so a missing
-variable fails the build rather than surfacing as `undefined` in production.
+`config/env.ts` validates `process.env` with Zod, so a missing variable fails the
+build rather than surfacing as `undefined` in production.
+
+It exports two things, and the split matters: `env` holds the `NEXT_PUBLIC_*`
+values and is safe to read anywhere, while `serverEnv()` holds server-only
+values and **throws** if called from the browser. Merging them into one object
+types server variables as present on the client, where they are `undefined` —
+code that type-checks and then takes the wrong branch in production.
 
 Each variable is listed literally. Next.js inlines `process.env.NEXT_PUBLIC_FOO`
 by textual substitution at build time, so a dynamic `process.env[key]` lookup

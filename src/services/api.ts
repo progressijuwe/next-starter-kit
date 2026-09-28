@@ -23,7 +23,24 @@ export const apiClient = axios.create({
     withCredentials: false,
 });
 
-/** Attach the bearer token, unless a caller has already set its own header. */
+/**
+ * Attach the bearer token, unless a caller has already set its own header.
+ *
+ * IMPORTANT: `getToken()` reads browser storage, so it always returns `null`
+ * during SSR and in Server Components. Requests made on the server are
+ * therefore unauthenticated — silently, with a 401 rather than an error you
+ * can grep for.
+ *
+ * When you need an authenticated request on the server, read the credential
+ * from the incoming request (`cookies()` / `headers()`) and pass it per call.
+ * The check below leaves an explicit Authorization header alone:
+ *
+ *   const token = (await cookies()).get('session')?.value;
+ *   await api.get<User>('/me', { headers: { Authorization: `Bearer ${token}` } });
+ *
+ * Moving to httpOnly cookies plus `withCredentials: true` removes this split
+ * entirely, which is the better end state. See lib/token-store.ts.
+ */
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = getToken();
 
@@ -92,12 +109,33 @@ function fallbackMessage(status: number): string {
 }
 
 /**
- * Unwrap the `{ data: … }` envelope when the backend uses one, and pass the
- * payload straight through when it doesn't. Keeps `ApiResponse` out of every
- * call site's type signature.
+ * Keys an envelope is allowed to contain. Used to tell a real envelope apart
+ * from a resource that merely happens to have a `data` field.
+ */
+const ENVELOPE_KEYS = new Set(['data', 'message', 'success', 'meta', 'errors', 'status']);
+
+/**
+ * Unwrap the `{ data: ... }` envelope when the backend uses one, and pass the
+ * payload straight through when it doesn't.
+ *
+ * Checking only for a `data` key was too eager: a resource with its own `data`
+ * field (a chart record, a webhook payload, a CMS block) got silently replaced
+ * by its inner value. Requiring every key to be an envelope key makes that
+ * false positive nearly impossible, because a real resource carries its own
+ * fields — `id`, `name` — alongside.
+ *
+ * The one case still ambiguous is a response that is exactly `{ data: ... }`
+ * and nothing else. If that is a real resource for you, call `apiClient`
+ * directly and skip the unwrapper, as `usersService.list` does.
  */
 function unwrap<T>(payload: ApiResponse<T> | T): T {
-    if (payload !== null && typeof payload === 'object' && 'data' in payload) {
+    if (
+        payload !== null &&
+        typeof payload === 'object' &&
+        !Array.isArray(payload) &&
+        'data' in payload &&
+        Object.keys(payload).every((key) => ENVELOPE_KEYS.has(key))
+    ) {
         return (payload as ApiResponse<T>).data;
     }
 
