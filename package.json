@@ -55,5 +55,8 @@
         "*.{json,css,md,mjs}": [
             "prettier --write"
         ]
+    },
+    "engines": {
+        "node": ">=22.22.1"
     }
 }

@@ -160,9 +160,10 @@ closing it. `type="multiple"` allows any number.
 The fallback shows while loading and stays if the image errors, so a broken URL
 degrades to initials.
 
-`Spinner` sits in a `role="status"` live region. Pass `label={null}` when
-something nearby already describes the pending state — two announcements are
-worse than one.
+`Spinner` sits in a `role="status"` live region **when it has a label**. Pass
+`label={null}` when something nearby already describes the pending state — two
+announcements are worse than one — and it drops the role and marks itself
+`aria-hidden`, rather than leaving an empty live region behind.
 
 ## Shared components
 

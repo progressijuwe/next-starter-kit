@@ -15,7 +15,11 @@
 - React Hook Form + Zod, including replaying server-side field errors
 - Zod-validated environment variables, failing at build rather than runtime
 - ESLint + Prettier + Husky + lint-staged
-- `error.tsx` and `not-found.tsx`, skip link, reduced-motion support
+- `error.tsx`, `global-error.tsx`, `loading.tsx`, `not-found.tsx`, `sitemap.ts`,
+  `robots.ts`, skip link, reduced-motion support
+- Security headers and `poweredByHeader: false` in `next.config.ts`
+- GitHub Actions CI running format, lint, typecheck and build
+- Accessible mobile navigation (Radix Dialog panel) below the `md` breakpoint
 
 ## Not done — pick up as needed
 
@@ -51,10 +55,9 @@ functions wide precisely so that swap stays contained.
 - **Dashboard shell** — the `--sidebar-*` tokens exist but nothing consumes them
 - **More primitives** — Select, Checkbox, Radio, Switch, Tooltip, Dropdown; all
   are in the `radix-ui` package already, or `npx shadcn@latest add <name>`
-- **CI** — see [git-workflow.md](./git-workflow.md) for a starting pipeline
 - **`next/image` usage** — currently unused; add `remotePatterns` to
   `next.config.ts` before loading remote images
-- **SEO** — `sitemap.ts`, `robots.ts`, and a real `/og.png`
+- **SEO** — a real `/og.png` at 1200x630 (sitemap and robots are wired up)
 - **Analytics and error reporting** — `error.tsx` currently only `console.error`s
 - **Internationalisation** — `utils/format.ts` takes an explicit locale
   throughout, so it's ready for it

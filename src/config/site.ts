@@ -22,10 +22,14 @@ export const siteConfig = {
     },
 } as const;
 
+/**
+ * Every entry must point at something that exists. An anchor to a section that
+ * was renamed or deleted fails silently — the link just does nothing — so when
+ * you change a section id, change it here too.
+ */
 export const mainNav: readonly NavItem[] = [
-    { title: 'Features', href: '/#features' },
     { title: 'Components', href: '/#components' },
-    { title: 'Docs', href: '/#docs' },
+    { title: 'Docs', href: `${siteConfig.links.github}/tree/main/docs`, external: true },
 ] as const;
 
 export type SiteConfig = typeof siteConfig;
